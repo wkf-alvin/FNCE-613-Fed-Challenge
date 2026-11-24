@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d13">
+  <title>The December Decision — NY Fed Challenge</title>
+  <style>
+    :root{
+      --bg:#080d13;--bg-2:#0c131c;--ink:#f2f0e9;--muted:#9aa8b4;--muted-2:#657582;
+      --line:rgba(206,224,235,.14);--line-bright:rgba(206,224,235,.28);
+      --blue:#8bd5f4;--blue-2:#4e9dc3;--blue-dim:rgba(110,191,226,.16);
+      --gold:#e5c47c;--red:#f08b79;--green:#9ed2b3;
+      --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+      --mono:ui-monospace,SFMono-Regular,Consolas,monospace;
+      color-scheme:dark;
+    }
+    *{box-sizing:border-box}
+    html{min-width:320px;background:var(--bg);scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5}
+    button{font:inherit;color:inherit}
+    button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .topline{height:30px;padding:0 4vw;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);color:var(--muted-2);font:10px var(--mono);letter-spacing:.11em;text-transform:uppercase}
+    .topline .signal{color:var(--gold)}
+    .topline .signal::before{content:"";display:inline-block;width:6px;height:6px;margin:0 8px 1px 0;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+    .masthead{position:sticky;top:0;z-index:20;background:rgba(8,13,19,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+    .head-inner{max-width:1480px;min-height:68px;margin:auto;padding:10px 4vw;display:grid;grid-template-columns:minmax(200px,1fr) auto auto;gap:28px;align-items:center}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
+    .brand-mark{width:28px;height:28px;border:1px solid var(--blue-2);border-radius:50%;display:grid;place-items:center;color:var(--blue);font:10px var(--mono);letter-spacing:-.08em;box-shadow:0 0 18px rgba(139,213,244,.13)}
+    .brand-name{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+    .brand-sub{display:block;margin-top:2px;color:var(--muted-2);font:9px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .page-nav{display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+    .page-nav::-webkit-scrollbar{display:none}
+    .nav-button{position:relative;flex:none;border:0;background:transparent;padding:14px 12px 13px;color:var(--muted);font-size:12px;white-space:nowrap;cursor:pointer;transition:color .2s}
+    .nav-button:hover{color:var(--ink)}
+    .nav-button[aria-current="page"]{color:var(--ink)}
+    .nav-button[aria-current="page"]::after{content:"";position:absolute;left:12px;right:12px;bottom:5px;height:1px;background:var(--blue);box-shadow:0 0 8px var(--blue)}
+    .page-count{min-width:48px;text-align:right;color:var(--muted-2);font:11px var(--mono);font-variant-numeric:tabular-nums}
+    main{max-width:1480px;margin:auto;padding:0 4vw}
+    .view{min-height:calc(100svh - 98px);padding:clamp(34px,5vw,72px) 0 58px}
+    .view[hidden]{display:none!important}
+    .view.enter{animation:pageIn .42s ease-out both}
+    @keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 18px;color:var(--gold);font:10px var(--mono);letter-spacing:.14em;text-transform:uppercase}
+    .eyebrow::before{content:"";width:20px;height:1px;background:var(--gold)}
+    h1,h2,h3,p{margin-top:0}
+    h1,h2{font-weight:400;letter-spacing:-.055em;line-height:1.04}
+    h1{max-width:920px;margin-bottom:18px;font-size:clamp(2.8rem,6vw,6.2rem)}
+    h1 em{font-style:normal;color:var(--blue)}
+    h2{max-width:860px;margin-bottom:14px;font-size:clamp(2.25rem,4.5vw,4.55rem)}
+    h3{font-weight:500;font-size:16px;line-height:1.25;margin-bottom:10px}
+    .dek{max-width:760px;color:var(--muted);font-size:clamp(15px,1.35vw,18px);line-height:1.6}
+    .view-heading{margin-bottom:34px}
+    .view-heading .dek{margin-bottom:0}
+    .hero-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(310px,.9fr);gap:clamp(34px,6vw,84px);align-items:center;margin-top:clamp(34px,6vw,72px)}
+    .hero-copy{max-width:690px}
+    .hero-copy .dek{max-width:620px}
+    .micro-line{display:flex;align-items:center;gap:11px;margin-top:26px;color:var(--muted-2);font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .micro-line::before{content:"";width:28px;height:1px;background:var(--blue-2)}
+    .hero-visual{border-left:1px solid var(--line);padding-left:clamp(22px,4vw,55px)}
+    .figure-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:6px;color:var(--muted);font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+    .figure-head strong{color:var(--ink);font-weight:400;letter-spacing:.02em}
+    .range-figure,.decision-figure{width:100%;height:auto;display:block;overflow:visible}
+    .chart-gridline{stroke:rgba(206,224,235,.12);stroke-width:1}
+    .chart-axis{stroke:rgba(206,224,235,.35);stroke-width:1}
+    .chart-tick{fill:var(--muted-2);font:12px var(--mono)}
+    .chart-note-svg{fill:var(--muted);font:12px var(--mono)}
+    .range-ghost{fill:rgba(139,213,244,.07);stroke:rgba(139,213,244,.48);stroke-width:1.3;stroke-dasharray:5 5}
+    .range-band{fill:var(--blue);opacity:.9;filter:drop-shadow(0 0 8px rgba(139,213,244,.4))}
+    .range-label{fill:#071018;font:600 13px var(--mono);text-anchor:middle}
+    .route-path{fill:none;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:4 5}
+    .route-dot{fill:var(--gold);filter:drop-shadow(0 0 7px rgba(229,196,124,.8));animation:routePulse 2.4s ease-in-out infinite}
+    @keyframes routePulse{0%,100%{opacity:.6}50%{opacity:1}}
+    .choice-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0 0}
+    .choice-readout{border-top:1px solid var(--line);padding-top:14px}
+    .choice-readout .label{display:block;color:var(--muted-2);font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .choice-readout strong{display:block;margin-top:4px;font:400 clamp(19px,2.2vw,28px) var(--sans);letter-spacing:-.04em}
+    .vote-strip{margin-top:30px;padding-top:19px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:18px}
+    .vote-label{color:var(--muted);font:11px var(--mono);text-transform:uppercase;letter-spacing:.08em}
+    .vote-label strong{color:var(--ink);font-size:20px;font-weight:400;letter-spacing:-.04em;margin-right:8px}
+    .vote-dots{display:flex;gap:7px;align-items:center}
+    .vote-dots i{width:7px;height:7px;border-radius:50%;background:var(--blue-2);box-shadow:0 0 9px rgba(139,213,244,.35)}
+    .vote-dots i:nth-last-child(-n+2){background:var(--gold);box-shadow:0 0 9px rgba(229,196,124,.4)}
+    .section-footer{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-top:42px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted-2);font:10px var(--mono);letter-spacing:.03em}
+    .section-footer button{border:0;background:transparent;padding:7px 0;color:var(--blue);font:11px var(--mono);text-transform:uppercase;letter-spacing:.08em;cursor:pointer}
+    .section-footer button:hover{color:var(--ink)}
+    .evidence-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:clamp(32px,6vw,78px);align-items:center}
+    .contribution-chart{margin-top:27px;max-width:840px}
+    .axis-legend{display:grid;grid-template-columns:minmax(120px,1fr) minmax(160px,3.3fr) 62px;gap:12px;align-items:end;margin:0 0 10px;color:var(--muted-2);font:10px var(--mono)}
+    .axis-line{display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid var(--line-bright)}
+    .axis-line span:nth-child(2){color:var(--ink)}
+    .contribution-row{width:100%;display:grid;grid-template-columns:minmax(120px,1fr) minmax(160px,3.3fr) 62px;gap:12px;align-items:center;border:0;background:transparent;text-align:left;padding:9px 0;cursor:pointer}
+    .contribution-name{color:var(--muted);font-size:13px;transition:color .2s}
+    .contribution-value{color:var(--ink);text-align:right;font:12px var(--mono);font-variant-numeric:tabular-nums}
+    .diverge-track{position:relative;height:18px;background:rgba(175,198,211,.07)}
+    .diverge-track::after{content:"";position:absolute;top:-4px;bottom:-4px;left:50%;width:1px;background:rgba(220,235,242,.48)}
+    .diverge-fill{position:absolute;top:3px;bottom:3px;width:var(--w);background:var(--blue-2);transform:scaleX(1);transition:filter .2s}
+    .diverge-fill.positive{left:50%;transform-origin:left}
+    .diverge-fill.negative{right:50%;background:var(--red);transform-origin:right}
+    .contribution-row:hover .contribution-name,.contribution-row:focus-visible .contribution-name,.contribution-row[aria-pressed="true"] .contribution-name{color:var(--ink)}
+    .contribution-row:hover .diverge-fill,.contribution-row:focus-visible .diverge-fill,.contribution-row[aria-pressed="true"] .diverge-fill{filter:brightness(1.4);box-shadow:0 0 14px currentColor}
+    .enter .diverge-fill{animation:barIn .72s cubic-bezier(.2,.75,.25,1) both}
+    .enter .contribution-row:nth-of-type(3) .diverge-fill{animation-delay:.07s}
+    .enter .contribution-row:nth-of-type(4) .diverge-fill{animation-delay:.14s}
+    .enter .contribution-row:nth-of-type(5) .diverge-fill{animation-delay:.21s}
+    .enter .contribution-row:nth-of-type(6) .diverge-fill{animation-delay:.28s}
+    .enter .contribution-row:nth-of-type(7) .diverge-fill{animation-delay:.35s}
+    @keyframes barIn{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    .chart-detail{min-height:42px;margin:15px 0 0;color:var(--muted);font-size:13px}
+    .chart-detail strong{color:var(--ink);font-weight:500}
+    .metric-column{border-left:1px solid var(--line);padding-left:clamp(24px,4vw,52px)}
+    .metric-pair{display:grid;gap:28px}
+    .metric-block{padding:0 0 20px;border-bottom:1px solid var(--line)}
+    .metric-number{font-size:clamp(3.4rem,7vw,6.3rem);line-height:.94;letter-spacing:-.08em;font-variant-numeric:tabular-nums}
+    .metric-unit{margin-top:10px;color:var(--blue);font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+    .metric-caption{margin:8px 0 0;color:var(--muted);font-size:13px}
+    .insight{margin-top:23px;padding-left:16px;border-left:2px solid var(--gold);color:var(--muted);font-size:14px}
+    .insight strong{color:var(--ink);font-weight:500}
+    .small-note{margin-top:25px;color:var(--muted-2);font-size:11px;line-height:1.55}
+    .control-tabs{display:flex;flex-wrap:wrap;gap:7px;margin:23px 0 21px}
+    .control-tabs button,.policy-options button{border:1px solid var(--line-bright);border-radius:999px;background:transparent;padding:9px 14px;color:var(--muted);font-size:12px;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+    .control-tabs button:hover,.policy-options button:hover{border-color:var(--blue-2);color:var(--ink)}
+    .control-tabs button[aria-pressed="true"],.policy-options button[aria-pressed="true"]{background:var(--blue-dim);border-color:var(--blue-2);color:var(--ink)}
+    .labor-panel[hidden],.inflation-panel[hidden]{display:none}
+    .labor-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.82fr);gap:clamp(32px,6vw,82px);align-items:start}
+    .labor-title-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;border-bottom:1px solid var(--line);padding-bottom:14px}
+    .labor-title-row h3{margin:0}
+    .labor-title-row span{color:var(--muted-2);font:10px var(--mono);text-transform:uppercase}
+    .labor-metrics{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+    .labor-metric{display:block;width:100%;min-height:111px;padding:18px 8px 15px 0;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:left;cursor:pointer}
+    .labor-metric .num{display:block;color:var(--ink);font-size:clamp(25px,3vw,38px);line-height:1.05;letter-spacing:-.055em;font-variant-numeric:tabular-nums;transition:color .2s}
+    .labor-metric .name{display:block;margin-top:8px;color:var(--muted);font-size:12px}
+    .labor-metric .context{display:block;margin-top:4px;color:var(--muted-2);font-size:10px}
+    .labor-metric:hover .num,.labor-metric:focus-visible .num,.labor-metric[aria-pressed="true"] .num{color:var(--blue)}
+    .labor-aside{border-left:1px solid var(--line);padding:7px 0 0 clamp(23px,4vw,50px)}
+    .aside-kicker{color:var(--gold);font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+    .aside-copy{margin:13px 0 0;color:var(--muted);font-size:15px;line-height:1.65}
+    .aside-copy strong{color:var(--ink);font-weight:500}
+    .paired-stat{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-top:24px;padding:15px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .paired-stat strong{font-size:24px;font-weight:400;letter-spacing:-.04em}
+    .paired-stat span{display:block;color:var(--muted-2);font:9px var(--mono);letter-spacing:.06em;text-transform:uppercase}
+    .paired-stat .equals{color:var(--muted-2);font:12px var(--mono)}
+    .inflation-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr);gap:clamp(32px,6vw,82px);align-items:start}
+    .inflation-chart{padding-top:5px}
+    .scale-caption{display:flex;justify-content:space-between;color:var(--muted-2);font:10px var(--mono);margin:0 0 12px}
+    .goal-track,.category-track{height:18px;position:relative;background:rgba(175,198,211,.07)}
+    .goal-track::after{content:"";position:absolute;top:-5px;bottom:-5px;left:44.44%;width:2px;background:var(--gold);box-shadow:0 0 8px rgba(229,196,124,.42)}
+    .goal-fill{height:100%;width:var(--w);background:var(--blue-2);transform-origin:left}
+    .enter .goal-fill{animation:barIn .7s ease-out both}
+    .goal-axis{display:flex;justify-content:space-between;margin-top:8px;color:var(--muted-2);font:10px var(--mono)}
+    .goal-row{margin:20px 0 26px}
+    .goal-row-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:9px}
+    .goal-row-head span{color:var(--muted);font-size:13px}
+    .goal-row-head strong{font:400 20px var(--mono);font-variant-numeric:tabular-nums}
+    .goal-legend{display:flex;align-items:center;gap:8px;margin-top:16px;color:var(--muted-2);font:10px var(--mono)}
+    .goal-legend i{width:8px;height:8px;background:var(--gold);border-radius:50%}
+    .category-list{display:grid;gap:3px}
+    .category-row{display:grid;width:100%;grid-template-columns:minmax(110px,1fr) minmax(80px,2.2fr) 48px;gap:11px;align-items:center;border:0;background:transparent;text-align:left;padding:8px 0;cursor:pointer}
+    .category-row .cat-name{color:var(--muted);font-size:12px}
+    .category-row .category-track{height:12px}
+    .category-row .category-track i{display:block;height:100%;width:var(--w);background:var(--blue-2);transform-origin:left}
+    .category-row strong{text-align:right;font:11px var(--mono);font-weight:400}
+    .category-row:hover .cat-name,.category-row[aria-pressed="true"] .cat-name{color:var(--ink)}
+    .enter .category-track i{animation:barIn .62s ease-out both}
+    .inflation-detail{min-height:42px;margin:12px 0 0;color:var(--muted);font-size:12px}
+    .price-context{border-left:1px solid var(--line);padding-left:clamp(22px,4vw,50px)}
+    .context-row{padding:0 0 17px;margin:0 0 19px;border-bottom:1px solid var(--line)}
+    .context-row .tag{color:var(--gold);font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .context-row p{margin:8px 0 0;color:var(--muted);font-size:14px}
+    .context-row strong{color:var(--ink);font-weight:500}
+    .warning-note{margin-top:22px;color:var(--muted-2);font-size:11px;line-height:1.55}
+    .decision-layout{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr);gap:clamp(32px,6vw,82px);align-items:start}
+    .policy-panel{border-top:1px solid var(--line);padding-top:17px}
+    .policy-panel-label{display:flex;justify-content:space-between;gap:14px;color:var(--muted);font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .policy-options{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 12px}
+    .selected-range{margin:17px 0 0;font-size:clamp(35px,6vw,64px);line-height:1;letter-spacing:-.075em;font-variant-numeric:tabular-nums}
+    .selected-path-copy{min-height:54px;margin:11px 0 0;color:var(--muted);font-size:13px;line-height:1.55}
+    .decision-figure{margin-top:20px}
+    .decision-band{fill:var(--blue);filter:drop-shadow(0 0 8px rgba(139,213,244,.3));transition:transform .65s cubic-bezier(.2,.75,.25,1)}
+    .decision-band.raise{fill:var(--red)}
+    .decision-band-label{fill:#071018;font:600 12px var(--mono);text-anchor:middle}
+    .decision-ghost{fill:rgba(139,213,244,.04);stroke:rgba(139,213,244,.35);stroke-width:1;stroke-dasharray:4 4}
+    .decision-arrow{fill:none;stroke:var(--gold);stroke-width:1.3;stroke-dasharray:4 5}
+    .tradeoff{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:20px}
+    .tradeoff-item{padding-top:14px;border-top:1px solid var(--line)}
+    .tradeoff-item .tag{color:var(--blue);font:10px var(--mono);letter-spacing:.09em;text-transform:uppercase}
+    .tradeoff-item.caution .tag{color:var(--gold)}
+    .tradeoff-item p{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.55}
+    .decision-side{border-left:1px solid var(--line);padding-left:clamp(22px,4vw,50px)}
+    .decision-side h3{font-size:18px}
+    .decision-side ul{list-style:none;padding:0;margin:18px 0 0}
+    .decision-side li{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+    .decision-side li::before{content:"+";color:var(--blue);font:13px var(--mono)}
+    .decision-side li strong{color:var(--ink);font-weight:500}
+    .pause-note{margin-top:24px;padding:14px 0 0;border-top:1px solid var(--line);color:var(--muted-2);font-size:12px}
+    .sources-wrap{max-width:960px}
+    .sources-intro{max-width:740px;color:var(--muted);font-size:15px;line-height:1.65}
+    .sources-list{list-style:none;margin:32px 0 0;padding:0;border-top:1px solid var(--line)}
+    .sources-list li{display:grid;grid-template-columns:minmax(140px,.5fr) minmax(0,1.5fr);gap:24px;padding:15px 0;border-bottom:1px solid var(--line)}
+    .source-name{color:var(--blue);font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    .source-desc{color:var(--muted);font-size:13px;line-height:1.5}
+    .sources-list a{color:var(--ink);text-decoration-color:var(--blue-2);text-underline-offset:3px}
+    .sources-list a:hover{color:var(--blue)}
+    .limitations{margin-top:32px;padding:17px 0 0;border-top:1px solid var(--line)}
+    .limitations h3{color:var(--gold);font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase}
+    .limitations p{max-width:780px;color:var(--muted);font-size:13px;line-height:1.65}
+    .bottom-nav{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-top:42px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted-2);font:10px var(--mono);letter-spacing:.05em;text-transform:uppercase}
+    .bottom-nav button{border:0;background:transparent;padding:8px 0;color:var(--blue);font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+    .bottom-nav button:hover{color:var(--ink)}
+    footer{max-width:1480px;margin:auto;padding:16px 4vw 25px;display:flex;justify-content:space-between;gap:15px;border-top:1px solid var(--line);color:var(--muted-2);font:9px var(--mono);letter-spacing:.08em;text-transform:uppercase}
+    @media(max-width:980px){
+      .head-inner{grid-template-columns:1fr auto;gap:10px}.page-nav{grid-column:1/-1;grid-row:2;margin:0 -1vw;padding:0 1vw}.nav-button{padding:10px 11px 13px}.page-count{grid-column:2;grid-row:1}
+      .hero-grid,.evidence-layout,.labor-layout,.inflation-layout,.decision-layout{grid-template-columns:1fr}
+      .hero-visual,.metric-column,.labor-aside,.price-context,.decision-side{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:24px}
+      .hero-visual{margin-top:7px}
+      .metric-pair{grid-template-columns:1fr 1fr;gap:20px}
+      .labor-aside,.price-context,.decision-side{margin-top:4px}
+    }
+    @media(max-width:620px){
+      .topline{padding:0 18px;font-size:8px}
+      .topline span:last-child{white-space:nowrap}
+      .head-inner{padding:8px 18px 0;min-height:82px}
+      .brand-name{font-size:10px}.brand-sub{font-size:8px}
+      .nav-button{padding:9px 10px 12px;font-size:11px}
+      main{padding:0 20px}
+      .view{min-height:calc(100svh - 112px);padding:40px 0 42px}
+      .view-heading{margin-bottom:27px}
+      h1{font-size:clamp(2.65rem,13vw,4.15rem)}
+      h2{font-size:clamp(2.2rem,10vw,3.3rem)}
+      .hero-grid{margin-top:31px}
+      .hero-visual{padding-left:0}
+      .figure-head{font-size:8px}
+      .choice-pair{gap:9px}
+      .choice-readout strong{font-size:21px}
+      .vote-strip{align-items:flex-start;flex-direction:column}
+      .vote-dots{gap:8px}
+      .axis-legend,.contribution-row{grid-template-columns:minmax(90px,.9fr) minmax(110px,2fr) 48px;gap:8px}
+      .contribution-name{font-size:11px}
+      .contribution-value{font-size:10px}
+      .diverge-track{height:15px}
+      .metric-pair{gap:14px}
+      .metric-number{font-size:clamp(3rem,15vw,4.7rem)}
+      .labor-metrics{grid-template-columns:1fr 1fr;gap:0 14px}
+      .labor-metric{min-height:103px}
+      .labor-metric .num{font-size:27px}
+      .category-row{grid-template-columns:minmax(93px,1fr) minmax(70px,1.8fr) 42px;gap:7px}
+      .category-row .cat-name{font-size:11px}
+      .tradeoff{grid-template-columns:1fr;gap:16px}
+      .sources-list li{grid-template-columns:1fr;gap:5px}
+      .section-footer,.bottom-nav,footer{font-size:8px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    }
+  </style>
+</head>
+<body>
+  <div class="topline"><span>NY FED CHALLENGE · POLICY BRIEF</span><span class="signal">Interactive decision story</span></div>
+  <header class="masthead">
+    <div class="head-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">NY</span>
+        <span><span class="brand-name">The December Decision</span><span class="brand-sub">October FOMC recap</span></span>
+      </div>
+      <nav class="page-nav" id="pageNav" aria-label="Explore the brief">
+        <button class="nav-button" type="button" data-view-target="readout" aria-current="page">Readout</button>
+        <button class="nav-button" type="button" data-view-target="growth">Growth</button>
+        <button class="nav-button" type="button" data-view-target="labor">Labor</button>
+        <button class="nav-button" type="button" data-view-target="prices">Prices</button>
+        <button class="nav-button" type="button" data-view-target="decision">Decision</button>
+        <button class="nav-button" type="button" data-view-target="sources">Sources</button>
+      </nav>
+      <div class="page-count" id="pageCount" aria-live="polite">01 / 06</div>
+    </div>
+  </header>
+  <main>
+    <section class="view" id="readout" data-page-label="The December decision">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">01 · The policy question</p>
+          <h1>One small step—<em>then reassess.</em></h1>
+          <p class="dek">Inflation is still above the 2% goal while activity remains solid. Our classroom recommendation is a single 25 bp increase, followed by a pause if demand or labor conditions soften.</p>
+          <div class="micro-line">A proposal for the December meeting · not official Fed policy</div>
+        </div>
+        <div class="hero-visual">
+          <div class="figure-head"><strong>Federal funds target corridor</strong><span>October hold → proposed step</span></div>
+          <svg class="range-figure" viewBox="0 0 1000 300" role="img" aria-labelledby="rangeTitle rangeDesc">
+            <title id="rangeTitle">Current and proposed federal funds target ranges</title>
+            <desc id="rangeDesc">The range held at 3.75 to 4.00 percent in October. The proposed next step moves the range 25 basis points to 4.00 to 4.25 percent.</desc>
+            <line class="chart-gridline" x1="120" y1="88" x2="920" y2="88"></line>
+            <line class="chart-gridline" x1="120" y1="156" x2="920" y2="156"></line>
+            <line class="chart-axis" x1="120" y1="220" x2="920" y2="220"></line>
+            <path class="route-path" d="M420 121 C485 56 555 56 620 121"></path>
+            <circle class="route-dot" r="5">
+              <animateMotion dur="2.4s" repeatCount="indefinite" path="M420 121 C485 56 555 56 620 121"></animateMotion>
+            </circle>
+            <rect class="range-band" x="320" y="105" width="200" height="34" rx="3"></rect>
+            <text class="range-label" x="420" y="127">3.75–4.00%</text>
+            <rect x="520" y="105" width="200" height="34" rx="3" fill="rgba(240,139,121,.13)" stroke="rgba(240,139,121,.65)" stroke-width="1.3"></rect>
+            <text x="620" y="127" fill="#f2f0e9" font-family="ui-monospace,monospace" font-size="13" text-anchor="middle">4.00–4.25%</text>
+            <line class="chart-axis" x1="120" y1="214" x2="120" y2="226"></line><line class="chart-axis" x1="320" y1="214" x2="320" y2="226"></line><line class="chart-axis" x1="520" y1="214" x2="520" y2="226"></line><line class="chart-axis" x1="720" y1="214" x2="720" y2="226"></line><line class="chart-axis" x1="920" y1="214" x2="920" y2="226"></line>
+            <text class="chart-tick" x="120" y="250" text-anchor="middle">3.50%</text><text class="chart-tick" x="320" y="250" text-anchor="middle">3.75%</text><text class="chart-tick" x="520" y="250" text-anchor="middle">4.00%</text><text class="chart-tick" x="720" y="250" text-anchor="middle">4.25%</text><text class="chart-tick" x="920" y="250" text-anchor="middle">4.50%</text>
+            <text class="chart-note-svg" x="420" y="283" text-anchor="middle">HELD · OCTOBER</text><text class="chart-note-svg" x="620" y="283" text-anchor="middle">PROPOSED · +25 BP</text>
+          </svg>
+          <div class="choice-pair">
+            <div class="choice-readout"><span class="label">October vote</span><strong>10–2 · held</strong></div>
+            <div class="choice-readout"><span class="label">Dissenting view</span><strong>Two preferred +25 bp</strong></div>
+          </div>
+          <div class="vote-strip"><span class="vote-label"><strong>12</strong> voting members</span><div class="vote-dots" role="img" aria-label="Ten votes to hold and two votes preferring a 25 basis point increase"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+        </div>
+      </div>
+      <div class="section-footer"><span>Start with the evidence, then compare the policy paths.</span><button type="button" data-next="growth">Explore growth ↓</button></div>
+    </section>
+
+    <section class="view" id="growth" data-page-label="Growth and demand" hidden>
+      <div class="view-heading">
+        <p class="eyebrow">02 · Output and demand</p>
+        <h2>Private demand is carrying the expansion.</h2>
+        <p class="dek">Real GDP grew at a 3.4% annualized pace in Q3. Real final sales to private domestic purchasers rose 4.9%.</p>
+      </div>
+      <div class="evidence-layout">
+        <div>
+          <div class="figure-head"><strong>Contributions to Q3 real GDP growth</strong><span>Percentage points · SAAR</span></div>
+          <div class="contribution-chart" role="group" aria-label="Interactive GDP contribution chart">
+            <div class="axis-legend"><span>Component</span><span class="axis-line"><span>−4</span><span>0</span><span>+4 pp</span></span><span>Contribution</span></div>
+            <button class="contribution-row" type="button" data-name="Consumption" data-value="+2.52 pp" data-detail="Consumption added 2.52 percentage points to Q3 real GDP growth." aria-pressed="false">
+              <span class="contribution-name">Consumption</span><span class="diverge-track"><i class="diverge-fill positive" style="--w:31.5%"></i></span><span class="contribution-value">+2.52</span>
+            </button>
+            <button class="contribution-row" type="button" data-name="Fixed investment" data-value="+1.66 pp" data-detail="Fixed investment added 1.66 percentage points to Q3 real GDP growth." aria-pressed="false">
+              <span class="contribution-name">Fixed investment</span><span class="diverge-track"><i class="diverge-fill positive" style="--w:20.75%"></i></span><span class="contribution-value">+1.66</span>
+            </button>
+            <button class="contribution-row" type="button" data-name="Inventories" data-value="+1.61 pp" data-detail="Private inventories added 1.61 percentage points to Q3 real GDP growth." aria-pressed="false">
+              <span class="contribution-name">Inventories</span><span class="diverge-track"><i class="diverge-fill positive" style="--w:20.125%"></i></span><span class="contribution-value">+1.61</span>
+            </button>
+            <button class="contribution-row" type="button" data-name="Government" data-value="+0.90 pp" data-detail="Government spending added 0.90 percentage points to Q3 real GDP growth." aria-pressed="false">
+              <span class="contribution-name">Government</span><span class="diverge-track"><i class="diverge-fill positive" style="--w:11.25%"></i></span><span class="contribution-value">+0.90</span>
+            </button>
+            <button class="contribution-row" type="button" data-name="Net exports" data-value="−3.32 pp" data-detail="Net exports subtracted 3.32 percentage points, a large offset to the positive contributions." aria-pressed="false">
+              <span class="contribution-name">Net exports</span><span class="diverge-track"><i class="diverge-fill negative" style="--w:41.5%"></i></span><span class="contribution-value">−3.32</span>
+            </button>
+            <p class="chart-detail" id="gdpDetail" aria-live="polite"><strong>Explore a component.</strong> Select a row to see its contribution.</p>
+          </div>
+          <p class="small-note">The displayed components sum to about 3.37 percentage points, which rounds to the reported 3.4% real GDP growth rate.</p>
+        </div>
+        <aside class="metric-column">
+          <div class="metric-pair">
+            <div class="metric-block"><div class="metric-number">3.4%</div><div class="metric-unit">Q3 real GDP · SAAR</div><p class="metric-caption">The overall economy expanded at a solid pace.</p></div>
+            <div class="metric-block"><div class="metric-number">4.9%</div><div class="metric-unit">Private domestic demand · SAAR</div><p class="metric-caption">Consumer spending and private investment signal resilient demand.</p></div>
+          </div>
+          <p class="insight"><strong>Policy implication:</strong> strong domestic demand limits the case for immediate easing, even as net exports weighed on headline growth.</p>
+        </aside>
+      </div>
+      <div class="section-footer"><span>Strong demand supports one small step; it does not guarantee future strength.</span><button type="button" data-next="labor">Next · labor ↓</button></div>
+    </section>
+
+    <section class="view" id="labor" data-page-label="Labor conditions" hidden>
+      <div class="view-heading">
+        <p class="eyebrow">03 · Employment and wages</p>
+        <h2>Labor is steady, with softer edges.</h2>
+        <p class="dek">The national unemployment rate is near 4.1%. Hiring and job switching are subdued, while New York’s financial sector shows a different mix of strength and weakness.</p>
+      </div>
+      <div class="control-tabs" role="group" aria-label="Choose a labor market view">
+        <button type="button" data-labor-choice="national" aria-pressed="true">National</button>
+        <button type="button" data-labor-choice="newyork" aria-pressed="false">New York</button>
+      </div>
+      <div class="labor-panel" data-labor-panel="national">
+        <div class="labor-layout">
+          <div>
+            <div class="labor-title-row"><h3>National labor signals</h3><span>Click a measure for context</span></div>
+            <div class="labor-metrics">
+              <button class="labor-metric" type="button" data-detail="Unemployment is close to the level described in the team’s assessment of a still-solid labor market." aria-pressed="true"><span class="num">4.1%</span><span class="name">Unemployment</span><span class="context">Near the current level</span></button>
+              <button class="labor-metric" type="button" data-detail="Average hourly earnings rose 3.1% over the year, roughly in line with core PCE inflation." aria-pressed="false"><span class="num">+3.1%</span><span class="name">Hourly earnings</span><span class="context">Year over year</span></button>
+              <button class="labor-metric" type="button" data-detail="Involuntary part-time work rose by 339,000 to 4.8 million people." aria-pressed="false"><span class="num">4.8M</span><span class="name">Involuntary part-time workers</span><span class="context">Up 339,000</span></button>
+              <button class="labor-metric" type="button" data-detail="Long-term unemployed people make up 27.6% of the jobless." aria-pressed="false"><span class="num">27.6%</span><span class="name">Share long-term unemployed</span><span class="context">Of all jobless people</span></button>
+            </div>
+          </div>
+          <aside class="labor-aside">
+            <span class="aside-kicker">The read</span>
+            <p class="aside-copy" id="nationalDetail" aria-live="polite">Unemployment is close to the level described in the team’s assessment of a still-solid labor market.</p>
+            <div class="paired-stat"><div><span>Hourly earnings</span><strong>3.1%</strong></div><span class="equals">≈</span><div><span>Core PCE</span><strong>3.1%</strong></div></div>
+            <p class="small-note">The slide deck describes layoffs as low and hiring and job switching as subdued. Population aging puts downward pressure on labor-force participation.</p>
+          </aside>
+        </div>
+      </div>
+      <div class="labor-panel" data-labor-panel="newyork" hidden>
+        <div class="labor-layout">
+          <div>
+            <div class="labor-title-row"><h3>New York labor and finance</h3><span>Click a measure for context</span></div>
+            <div class="labor-metrics">
+              <button class="labor-metric" type="button" data-detail="Securities employment reached a record 207,400 in 2025." aria-pressed="true"><span class="num">207,400</span><span class="name">Securities employment</span><span class="context">Record level · 2025</span></button>
+              <button class="labor-metric" type="button" data-detail="Securities employment is on pace to add about 5,300 jobs in 2026." aria-pressed="false"><span class="num">+5,300</span><span class="name">Projected job growth</span><span class="context">2026 pace</span></button>
+              <button class="labor-metric" type="button" data-detail="First-half pretax profits reached $45.9 billion, up 51.3%, with only modest job growth." aria-pressed="false"><span class="num">$45.9B</span><span class="name">First-half pretax profits</span><span class="context">Up 51.3%</span></button>
+              <button class="labor-metric" type="button" data-detail="NYC private employment is down 16,300 this year; excluding health care, it is down 32,000 over 12 months." aria-pressed="false"><span class="num">−16,300</span><span class="name">NYC private employment</span><span class="context">This year · −32,000 ex-health over 12 months</span></button>
+            </div>
+          </div>
+          <aside class="labor-aside">
+            <span class="aside-kicker">The read</span>
+            <p class="aside-copy" id="newyorkDetail" aria-live="polite">Securities employment reached a record 207,400 in 2025.</p>
+            <p class="small-note">Financial profits and securities employment are strong, but broader NYC private employment has weakened. One city sector is not a proxy for the national labor market.</p>
+          </aside>
+        </div>
+      </div>
+      <div class="section-footer"><span>Unemployment alone does not capture hiring intensity or participation.</span><button type="button" data-next="prices">Next · prices ↓</button></div>
+    </section>
+
+    <section class="view" id="prices" data-page-label="Inflation" hidden>
+      <div class="view-heading">
+        <p class="eyebrow">04 · Price stability</p>
+        <h2>Inflation remains above target—and broad.</h2>
+        <p class="dek">PCE inflation is still above 2%. The latest CPI categories also show increases beyond energy alone. Switch between measures to keep their time windows and units distinct.</p>
+      </div>
+      <div class="control-tabs" role="group" aria-label="Choose an inflation measure">
+        <button type="button" data-inflation-choice="pce" aria-pressed="true">PCE · year over year</button>
+        <button type="button" data-inflation-choice="cpi" aria-pressed="false">CPI · monthly change</button>
+      </div>
+      <div class="inflation-layout">
+        <div class="inflation-panel" data-inflation-panel="pce">
+          <div class="figure-head"><strong>September PCE price index</strong><span>Year over year · 0–4.5%</span></div>
+          <div class="inflation-chart" role="img" aria-label="Headline PCE inflation was 3.6 percent and core PCE inflation was 3.1 percent year over year, both above the 2 percent goal">
+            <div class="scale-caption"><span>0%</span><span>2% goal</span><span>4.5%</span></div>
+            <div class="goal-row"><div class="goal-row-head"><span>Headline PCE</span><strong>3.6%</strong></div><div class="goal-track"><div class="goal-fill" style="--w:80%"></div></div></div>
+            <div class="goal-row"><div class="goal-row-head"><span>Core PCE</span><strong>3.1%</strong></div><div class="goal-track"><div class="goal-fill" style="--w:68.89%"></div></div></div>
+            <div class="goal-axis"><span>0%</span><span>4.5%</span></div>
+            <div class="goal-legend"><i></i><span>Gold marker = Federal Reserve’s 2% inflation goal</span></div>
+          </div>
+        </div>
+        <div class="inflation-panel" data-inflation-panel="cpi" hidden>
+          <div class="figure-head"><strong>October CPI categories</strong><span>Monthly change · 0–1.0%</span></div>
+          <div class="scale-caption"><span>0%</span><span>0.5%</span><span>1.0%</span></div>
+          <div class="category-list">
+            <button class="category-row" type="button" data-detail="Core CPI rose 0.3% in October, the third straight month at that pace." aria-pressed="true"><span class="cat-name">Core CPI</span><span class="category-track"><i style="--w:30%"></i></span><strong>0.3%</strong></button>
+            <button class="category-row" type="button" data-detail="Shelter prices rose 0.3% month over month in October." aria-pressed="false"><span class="cat-name">Shelter</span><span class="category-track"><i style="--w:30%"></i></span><strong>0.3%</strong></button>
+            <button class="category-row" type="button" data-detail="Food prices rose 0.5% month over month in October." aria-pressed="false"><span class="cat-name">Food</span><span class="category-track"><i style="--w:50%"></i></span><strong>0.5%</strong></button>
+            <button class="category-row" type="button" data-detail="Energy prices rose 0.7% month over month in October." aria-pressed="false"><span class="cat-name">Energy</span><span class="category-track"><i style="--w:70%"></i></span><strong>0.7%</strong></button>
+            <button class="category-row" type="button" data-detail="Recreation prices rose 0.8% month over month in October." aria-pressed="false"><span class="cat-name">Recreation</span><span class="category-track"><i style="--w:80%"></i></span><strong>0.8%</strong></button>
+            <button class="category-row" type="button" data-detail="Transport services rose 0.8% month over month in October." aria-pressed="false"><span class="cat-name">Transport services</span><span class="category-track"><i style="--w:80%"></i></span><strong>0.8%</strong></button>
+            <button class="category-row" type="button" data-detail="Medical services rose 0.3% month over month in October." aria-pressed="false"><span class="cat-name">Medical services</span><span class="category-track"><i style="--w:30%"></i></span><strong>0.3%</strong></button>
+          </div>
+          <p class="inflation-detail" id="cpiDetail" aria-live="polite">Core CPI rose 0.3% in October, the third straight month at that pace.</p>
+        </div>
+        <aside class="price-context">
+          <div class="context-row"><span class="tag">Demand</span><p>Consumer spending and business investment remain <strong>resilient</strong>.</p></div>
+          <div class="context-row"><span class="tag">Supply</span><p>Tariffs, energy and equipment-capacity constraints can also <strong>raise costs</strong>.</p></div>
+          <div class="warning-note">Broad category increases do not prove demand caused inflation. Some price pressures may be supply-driven.</div>
+        </aside>
+      </div>
+      <div class="section-footer"><span>September real PCE was roughly flat, a reason to weigh policy lags.</span><button type="button" data-next="decision">Next · decision ↓</button></div>
+    </section>
+
+    <section class="view" id="decision" data-page-label="Policy choice" hidden>
+      <div class="view-heading">
+        <p class="eyebrow">05 · The decision test</p>
+        <h2>One more step, without promising a cycle.</h2>
+        <p class="dek">The evidence supports a small increase; the risks argue against signaling a sequence. Choose a path to see how the target range and recommendation change.</p>
+      </div>
+      <div class="decision-layout">
+        <div>
+          <div class="policy-panel">
+            <div class="policy-panel-label"><span>Compare the target-range path</span><span>25 bp = 0.25 percentage points</span></div>
+            <div class="policy-options" role="group" aria-label="Choose a policy path">
+              <button type="button" data-policy-choice="hold" aria-pressed="false">Hold · 3.75–4.00%</button>
+              <button type="button" data-policy-choice="raise" aria-pressed="true">Raise 25 bp · 4.00–4.25%</button>
+            </div>
+            <div class="selected-range" id="selectedRange" aria-live="polite">4.00–4.25%</div>
+            <p class="selected-path-copy" id="selectedPathCopy">A single marginal increase adds restraint while leaving room to pause if conditions weaken.</p>
+            <svg class="decision-figure" viewBox="0 0 900 240" role="img" aria-labelledby="decisionTitle decisionDesc">
+              <title id="decisionTitle">Selected federal funds target range</title>
+              <desc id="decisionDesc">The selected path moves the target range on a scale from 3.50 to 4.50 percent.</desc>
+              <line class="chart-gridline" x1="90" y1="60" x2="810" y2="60"></line><line class="chart-gridline" x1="90" y1="120" x2="810" y2="120"></line><line class="chart-axis" x1="90" y1="174" x2="810" y2="174"></line>
+              <rect class="decision-ghost" x="270" y="91" width="180" height="31" rx="3"></rect>
+              <path class="decision-arrow" d="M360 76 C425 27 475 27 540 76"></path>
+              <g class="decision-band raise" id="decisionBand"><rect x="270" y="91" width="180" height="31" rx="3"></rect><text class="decision-band-label" id="decisionBandLabel" x="360" y="111">4.00–4.25%</text></g>
+              <line class="chart-axis" x1="90" y1="168" x2="90" y2="180"></line><line class="chart-axis" x1="270" y1="168" x2="270" y2="180"></line><line class="chart-axis" x1="450" y1="168" x2="450" y2="180"></line><line class="chart-axis" x1="630" y1="168" x2="630" y2="180"></line><line class="chart-axis" x1="810" y1="168" x2="810" y2="180"></line>
+              <text class="chart-tick" x="90" y="203" text-anchor="middle">3.50%</text><text class="chart-tick" x="270" y="203" text-anchor="middle">3.75%</text><text class="chart-tick" x="450" y="203" text-anchor="middle">4.00%</text><text class="chart-tick" x="630" y="203" text-anchor="middle">4.25%</text><text class="chart-tick" x="810" y="203" text-anchor="middle">4.50%</text>
+            </svg>
+          </div>
+          <div class="tradeoff">
+            <div class="tradeoff-item"><span class="tag">Supports a hike</span><p>Inflation is above target. Domestic demand is resilient. Two FOMC members preferred a hike in October.</p></div>
+            <div class="tradeoff-item caution"><span class="tag">Argues for caution</span><p>Policy works with a lag. Some inflation is supply-driven. September real PCE was roughly flat.</p></div>
+          </div>
+        </div>
+        <aside class="decision-side">
+          <h3>What would make us pause?</h3>
+          <ul>
+            <li><span>Clear evidence of <strong>softer demand</strong>.</span></li>
+            <li><span>Broader deterioration in <strong>labor conditions</strong>.</span></li>
+            <li><span>Faster disinflation in <strong>core measures</strong>.</span></li>
+          </ul>
+          <p class="pause-note">One marginal increase, then reassess. The recommendation is a classroom position, not a forecast of the FOMC’s next move.</p>
+        </aside>
+      </div>
+      <div class="section-footer"><span>Recommended path: +25 bp, then pause if the data turn.</span><button type="button" data-next="sources">Next · sources ↓</button></div>
+    </section>
+
+    <section class="view" id="sources" data-page-label="Sources and limits" hidden>
+      <div class="sources-wrap">
+        <p class="eyebrow">06 · Source notes</p>
+        <h2>Read the figures with their definitions.</h2>
+        <p class="sources-intro">This interactive story uses the figures and interpretation in the supplied NY Fed Challenge deck. Indicators describe different parts of the economy, use different reporting periods, and do not establish causation.</p>
+        <ul class="sources-list">
+          <li><span class="source-name">Federal Reserve</span><span class="source-desc"><a href="https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm" target="_blank" rel="noreferrer">October 28, 2026 FOMC statement</a> · target range held at 3.75–4.00%; 10–2 vote.</span></li>
+          <li><span class="source-name">BEA</span><span class="source-desc"><a href="https://www.bea.gov/" target="_blank" rel="noreferrer">Q3 GDP advance estimate</a> and <a href="https://www.bea.gov/" target="_blank" rel="noreferrer">September PCE price index</a> · real GDP 3.4% SAAR; private domestic demand 4.9% SAAR; headline and core PCE 3.6% and 3.1% year over year.</span></li>
+          <li><span class="source-name">BLS</span><span class="source-desc"><a href="https://www.bls.gov/charts/employment-situation/civilian-unemployment-rate.htm" target="_blank" rel="noreferrer">Civilian unemployment rate</a>, <a href="https://www.bls.gov/charts/employment-situation/civilian-labor-force-participation-rate.htm" target="_blank" rel="noreferrer">labor-force participation</a> and October 2026 CPI.</span></li>
+          <li><span class="source-name">New York Fed / NYROIC</span><span class="source-desc">Securities employment and NYC private-employment summaries cited in the presentation; New York Fed Survey of Consumer Expectations, November 9.</span></li>
+          <li><span class="source-name">Team position</span><span class="source-desc">A classroom recommendation to raise 25 bp, then reassess. It is an argument for discussion, not official Federal Reserve guidance.</span></li>
+        </ul>
+        <div class="limitations">
+          <h3>Interpretation and timing</h3>
+          <p>October CPI categories are month-over-month changes; September PCE rates are year over year. Q3 GDP is reported at a seasonally adjusted annual rate. The deck calls for refreshing the brief with November 25 releases. No figures have been updated beyond the source deck for this version.</p>
+        </div>
+      </div>
+      <div class="bottom-nav"><span>NY FED CHALLENGE · DECEMBER DECISION</span><button type="button" data-next="readout">Back to the opening ↑</button></div>
+    </section>
+  </main>
+  <footer><span>NY FED CHALLENGE · DECEMBER DECISION</span><span id="footerPage">01 · The policy question</span></footer>
+  <script>
+    (() => {
+      const pageIds = ["readout","growth","labor","prices","decision","sources"];
+      const views = Array.from(document.querySelectorAll(".view"));
+      const navButtons = Array.from(document.querySelectorAll("[data-view-target]"));
+      const pageCount = document.getElementById("pageCount");
+      const footerPage = document.getElementById("footerPage");
+      let activeId = "readout";
+      function showView(id, updateHash) {
+        if (pageIds.indexOf(id) < 0) id = "readout";
+        activeId = id;
+        views.forEach(view => {
+          view.hidden = view.id !== id;
+          view.classList.remove("enter");
+        });
+        navButtons.forEach(button => {
+          if (button.dataset.viewTarget === id) button.setAttribute("aria-current","page");
+          else button.removeAttribute("aria-current");
+        });
+        const index = pageIds.indexOf(id);
+        pageCount.textContent = String(index + 1).padStart(2,"0") + " / " + String(pageIds.length).padStart(2,"0");
+        footerPage.textContent = String(index + 1).padStart(2,"0") + " · " + document.getElementById(id).dataset.pageLabel;
+        if (updateHash && location.hash !== "#" + id) history.replaceState(null,"","#" + id);
+        const current = document.getElementById(id);
+        current.classList.add("active");
+        requestAnimationFrame(() => current.classList.add("enter"));
+        window.scrollTo({top:0,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+      }
+      navButtons.forEach(button => button.addEventListener("click",() => showView(button.dataset.viewTarget,true)));
+      document.querySelectorAll("[data-next]").forEach(button => button.addEventListener("click",() => showView(button.dataset.next,true)));
+      document.getElementById("pageNav").addEventListener("keydown",event => {
+        if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+        const currentIndex = pageIds.indexOf(activeId);
+        const nextIndex = (currentIndex + (event.key === "ArrowRight" ? 1 : pageIds.length - 1)) % pageIds.length;
+        event.preventDefault();
+        showView(pageIds[nextIndex],true);
+        navButtons[nextIndex].focus();
+      });
+      window.addEventListener("hashchange",() => showView(location.hash.slice(1),false));
+      const firstHash = location.hash.slice(1);
+      showView(pageIds.indexOf(firstHash) >= 0 ? firstHash : "readout",false);
+
+      document.querySelectorAll(".contribution-row").forEach(button => button.addEventListener("click",() => {
+        document.querySelectorAll(".contribution-row").forEach(row => row.setAttribute("aria-pressed",String(row === button)));
+        document.getElementById("gdpDetail").innerHTML = "<strong>" + button.dataset.name + " · " + button.dataset.value + ".</strong> " + button.dataset.detail;
+      }));
+
+      document.querySelectorAll("[data-labor-choice]").forEach(button => button.addEventListener("click",() => {
+        const choice = button.dataset.laborChoice;
+        document.querySelectorAll("[data-labor-choice]").forEach(item => item.setAttribute("aria-pressed",String(item === button)));
+        document.querySelectorAll("[data-labor-panel]").forEach(panel => { panel.hidden = panel.dataset.laborPanel !== choice; });
+      }));
+      document.querySelectorAll(".labor-metric").forEach(button => button.addEventListener("click",() => {
+        const panel = button.closest(".labor-panel");
+        panel.querySelectorAll(".labor-metric").forEach(item => item.setAttribute("aria-pressed",String(item === button)));
+        const detailId = panel.dataset.laborPanel === "national" ? "nationalDetail" : "newyorkDetail";
+        document.getElementById(detailId).textContent = button.dataset.detail;
+      }));
+
+      document.querySelectorAll("[data-inflation-choice]").forEach(button => button.addEventListener("click",() => {
+        const choice = button.dataset.inflationChoice;
+        document.querySelectorAll("[data-inflation-choice]").forEach(item => item.setAttribute("aria-pressed",String(item === button)));
+        document.querySelectorAll("[data-inflation-panel]").forEach(panel => { panel.hidden = panel.dataset.inflationPanel !== choice; });
+      }));
+      document.querySelectorAll(".category-row").forEach(button => button.addEventListener("click",() => {
+        document.querySelectorAll(".category-row").forEach(item => item.setAttribute("aria-pressed",String(item === button)));
+        document.getElementById("cpiDetail").textContent = button.dataset.detail;
+      }));
+
+      const policyCopy = {
+        hold:{range:"3.75–4.00%",copy:"Holding avoids another increase while policy works with a lag, but leaves above-target inflation without added restraint.",x:0},
+        raise:{range:"4.00–4.25%",copy:"A single marginal increase adds restraint while leaving room to pause if conditions weaken.",x:180}
+      };
+      document.querySelectorAll("[data-policy-choice]").forEach(button => button.addEventListener("click",() => {
+        const mode = button.dataset.policyChoice;
+        document.querySelectorAll("[data-policy-choice]").forEach(item => item.setAttribute("aria-pressed",String(item === button)));
+        document.getElementById("selectedRange").textContent = policyCopy[mode].range;
+        document.getElementById("selectedPathCopy").textContent = policyCopy[mode].copy;
+        document.getElementById("decisionBand").setAttribute("transform","translate(" + policyCopy[mode].x + " 0)");
+        document.getElementById("decisionBandLabel").textContent = policyCopy[mode].range;
+        document.getElementById("decisionBand").classList.toggle("raise",mode === "raise");
+      }));
+    })();
+  </script>
+</body>
+</html>
